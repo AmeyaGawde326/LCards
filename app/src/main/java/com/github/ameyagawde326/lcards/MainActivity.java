@@ -1,5 +1,7 @@
 package com.github.ameyagawde326.lcards;
 
+import static java.lang.reflect.Array.getByte;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -14,6 +16,9 @@ import com.loopj.android.http.FileAsyncHttpResponseHandler;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -64,15 +69,20 @@ public class MainActivity extends AppCompatActivity {
                 //Getting the data from excel and store in natively in a excel worksheet
                 WorkbookSettings ws = new WorkbookSettings();
                 ws.setGCDisabled(true);
+                ws.setEncoding( "Cp1252" );
                 if (file != null) {
                     try {
-                        workbook = workbook.getWorkbook(file);
+                        workbook = workbook.getWorkbook(file,ws);
                         Sheet sheet = workbook.getSheet(0);
                         //using for loop to store it in a array list we created at the start
                         for (int i = 0; i < sheet.getRows(); i++) {
                             Cell[] row = sheet.getRow(i);
-                            frenchWord.add(row[1].getContents());
+                            byte[] bytes = row[1].getContents().getBytes(StandardCharsets.UTF_8);
+                            String frn_utf_8 = new String(bytes);
+                            frenchWord.add(frn_utf_8);
                             meanings.add(row[row.length-1].getContents());
+                            PrintStream out = new PrintStream(System.out, true , "UTF-8");
+                            out.println(frn_utf_8);
                         }
 
                     } catch (IOException e) {
@@ -97,13 +107,13 @@ public class MainActivity extends AppCompatActivity {
                 String FrenchWord, Meaning;
                 FrenchWord = frenchWord.get(index);
                 Meaning = meanings.get(index);
-                frnword.setText(FrenchWord);
-                means.setText(Meaning);
                 if(Flipper.isBackSide())
                 {
-                Flipper.flipTheView();
+                    Flipper.flipTheView();
                 }
-                System.out.println(frenchWord.get(6));
+                frnword.setText(FrenchWord);
+                means.setText(Meaning);
+
 
             }
         });
