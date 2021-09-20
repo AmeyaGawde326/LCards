@@ -77,12 +77,8 @@ public class MainActivity extends AppCompatActivity {
                         //using for loop to store it in a array list we created at the start
                         for (int i = 0; i < sheet.getRows(); i++) {
                             Cell[] row = sheet.getRow(i);
-                            byte[] bytes = row[1].getContents().getBytes(StandardCharsets.UTF_8);
-                            String frn_utf_8 = new String(bytes);
-                            frenchWord.add(frn_utf_8);
+                            frenchWord.add(row[1].getContents());
                             meanings.add(row[row.length-1].getContents());
-                            PrintStream out = new PrintStream(System.out, true , "UTF-8");
-                            out.println(frn_utf_8);
                         }
 
                     } catch (IOException e) {
